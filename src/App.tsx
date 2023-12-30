@@ -1,38 +1,80 @@
-import './App.css'
-import axios from 'axios'
+import axios from 'axios';
+import './App.css';
+import {
+  fetchProfile,
+  getAccessToken,
+  redirectToAuthCodeFlow,
+} from './services/spotify';
+import { useEffect, useState } from 'react';
 
-function App() {
-  
+const App = () => {
+  console.log('hello world');
+
+  const [code, setCode] = useState<string | null>();
+  const [token, setToken] = useState<string | null>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const params = new URLSearchParams(window.location.search);
+
+      const code = params.get('code');
+
+      if (!code) {
+        redirectToAuthCodeFlow(import.meta.env.VITE_CLIENT_ID);
+      } else {
+        try {
+          setCode(code);
+          localStorage.setItem('code', code);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [code]);
+
   return (
     <>
       <button
-        onClick={() => {
-          axios
-            .post(
-              'https://accounts.spotify.com/api/token',
-              {
-                grant_type: 'client_credentials',
-                client_id: import.meta.env.VITE_CLIENT_ID,
-                client_secret: import.meta.env.VITE_CLIENT_SECRET,
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                },
-              },
-            )
-            .then((res) => {
-              console.log(res)
-            })
-            .catch((err) => {
-              console.log(err)
-            })
+        onClick={async () => {
+          // const accessToken = localStorage.getItem('access-token');
+          // console.log({ accessToken });
+          console.log({ code });
+          const accessToken = await getAccessToken(code ?? '');
+          setToken(accessToken);
+          console.log({ accessToken });
+
+          // axios
+          //   .get('https://api.spotify.com/v1/me', {
+          //     headers: { Authorization: `Bearer ${accessToken}` },
+          //   })
+          //   .then((res) => {
+          //     console.log(res.data);
+          //   })
+          //   .catch((err) => console.log(err));
         }}
       >
-        click
+        get
+      </button>
+      <button
+        onClick={() => {
+          console.log('state', token);
+          console.log('LS: ', localStorage.getItem('token'));
+        }}
+      >
+        see token
+      </button>
+      <button
+        onClick={async () => {
+          const p = await fetchProfile(token ?? '');
+          console.log({ p });
+        }}
+      >
+        profile
       </button>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

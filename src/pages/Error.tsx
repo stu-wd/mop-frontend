@@ -35,12 +35,7 @@ const Error = () => {
         </Typography>
         <Typography variant="body1" sx={{ paddingLeft: 10, paddingRight: 10 }}>
           I'm sorry, but it seems like you have landed on a page that is no
-          longer available or has been relocated. If you think that you were
-          directed to this page by mistake, please reach out to{' '}
-          <span>
-            <a href="mailto:help@bitrip.com">help@bitrip.com</a>
-          </span>
-          for assistance.
+          longer available or has been relocated.
         </Typography>
         <Button
           startIcon={<ArrowBackIcon />}

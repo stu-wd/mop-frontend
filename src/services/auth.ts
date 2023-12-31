@@ -1,19 +1,29 @@
-const generateRandomString = (length: number) => {
+export const generateRandomString = (length: number) => {
   const possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const values = crypto.getRandomValues(new Uint8Array(length));
-  return values.reduce((acc, x) => acc + possible[x % possible.length], '');
+  let randomString = '';
+  for (let i = 0; i < length; i++) {
+    randomString += possible.charAt(
+      Math.floor(Math.random() * possible.length),
+    );
+  }
+  return randomString;
 };
 
-const sha256 = async (plain: string) => {
+export const sha256 = async (plain: string) => {
   const encoder = new TextEncoder();
+  ``;
   const data = encoder.encode(plain);
-  return window.crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return hashBuffer;
 };
 
-const base64encode = (input: ArrayBuffer) => {
-  return btoa(String.fromCharCode(...new Uint8Array(input)))
-    .replace(/=/g, '')
+export const base64UrlEncode = (buffer: ArrayBuffer) => {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  bytes.forEach((byte) => (binary += String.fromCharCode(byte)));
+  return btoa(binary)
     .replace(/\+/g, '-')
-    .replace(/\//g, '_');
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 };

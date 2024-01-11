@@ -10,7 +10,7 @@ export const getAccessToken = async (code: string) => {
         grant_type: 'authorization_code',
         client_id: import.meta.env.VITE_CLIENT_ID,
         code,
-        redirect_uri: 'http://localhost:5173/',
+        redirect_uri: 'http://localhost:5151/dashboard',
         code_verifier: verifier,
       },
       {
@@ -20,7 +20,6 @@ export const getAccessToken = async (code: string) => {
       },
     )
     .then((res) => {
-      console.log('token => ', res.data.access_token);
       const token = res.data.access_token;
       return token;
     })
@@ -29,7 +28,9 @@ export const getAccessToken = async (code: string) => {
     });
 };
 
-export const fetchProfile = async (token: string): Promise<any> => {
+export const getSpotifyUser = async (token: string): Promise<any> => {
+  console.log(token);
+
   try {
     const result = await fetch('https://api.spotify.com/v1/me', {
       method: 'GET',
@@ -38,6 +39,19 @@ export const fetchProfile = async (token: string): Promise<any> => {
 
     return await result.json();
   } catch (error) {
-    console.log(error);
+    console.log('getspotifyuser => ', error);
+  }
+};
+
+export const getSpotifyStuser = async (token: string): Promise<any> => {
+  try {
+    const response = await axios.get(
+      'https://api.spotify.com/v1/users/122228672',
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log('getspotifyuser => ', error);
   }
 };

@@ -6,6 +6,7 @@ export const useSpotifyStore = create<AppState>((set) => ({
   mode: 'dark',
   isLoggedIn: false,
   spotifyUser: null,
+  spotifyStuser: null,
 }));
 
 type AppStoreProps = {

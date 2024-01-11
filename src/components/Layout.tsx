@@ -82,7 +82,6 @@
 // export default Layout;
 
 import React from 'react';
-import { useSpotifyStore } from '../store';
 import { Box, Container, ThemeProvider } from '@mui/system';
 import { SpotifyAppBar } from './AppBar';
 import { createTheme } from '@mui/material/styles';
@@ -94,10 +93,6 @@ type LayoutProps = {
 const theme = createTheme();
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { isLoggedIn, spotifyUser } = useSpotifyStore.getState();
-
-  console.log({ isLoggedIn, spotifyUser });
-
   return (
     <ThemeProvider theme={theme}>
       <Box

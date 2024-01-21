@@ -24,23 +24,27 @@ const Login = () => {
   }, []);
 
   const handleLogin = async () => {
-    const codeVerifier = generateRandomString(64);
-    const codeChallenge = base64UrlEncode(await sha256(codeVerifier));
+    if (localStorage.getItem('token')) {
+      navigate('/dashboard');
+    } else {
+      const codeVerifier = generateRandomString(64);
+      const codeChallenge = base64UrlEncode(await sha256(codeVerifier));
 
-    localStorage.setItem('verifier', codeVerifier);
+      localStorage.setItem('verifier', codeVerifier);
 
-    const authorizeUrl = `https://accounts.spotify.com/authorize?${new URLSearchParams(
-      {
-        response_type: 'code',
-        client_id: import.meta.env.VITE_CLIENT_ID,
-        scope: scopes,
-        redirect_uri: 'http://localhost:5151/dashboard',
-        code_challenge_method: 'S256',
-        code_challenge: codeChallenge,
-      },
-    )}`;
+      const authorizeUrl = `https://accounts.spotify.com/authorize?${new URLSearchParams(
+        {
+          response_type: 'code',
+          client_id: import.meta.env.VITE_CLIENT_ID,
+          scope: scopes,
+          redirect_uri: `${import.meta.env.VITE_FRONTEND_URL}/dashboard`,
+          code_challenge_method: 'S256',
+          code_challenge: codeChallenge,
+        },
+      )}`;
 
-    window.location.href = authorizeUrl;
+      window.location.href = authorizeUrl;
+    }
   };
 
   return (

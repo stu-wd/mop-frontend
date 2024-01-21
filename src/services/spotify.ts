@@ -10,7 +10,7 @@ export const getAccessToken = async (code: string) => {
         grant_type: 'authorization_code',
         client_id: import.meta.env.VITE_CLIENT_ID,
         code,
-        redirect_uri: 'http://localhost:5151/dashboard',
+        redirect_uri: `${import.meta.env.VITE_FRONTEND_URL}/dashboard`,
         code_verifier: verifier,
       },
       {
@@ -29,8 +29,6 @@ export const getAccessToken = async (code: string) => {
 };
 
 export const getSpotifyUser = async (token: string): Promise<any> => {
-  console.log(token);
-
   try {
     const result = await fetch('https://api.spotify.com/v1/me', {
       method: 'GET',

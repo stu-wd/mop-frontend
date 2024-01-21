@@ -3,10 +3,10 @@ import axios from 'axios';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { getSpotifyStuser, getSpotifyUser } from '../services/spotify';
+import { getSpotifyUser } from '../services/spotify';
 
 export const Dashboard = () => {
-  const { spotifyUser, spotifyStuser } = useSpotifyStore.getState();
+  const { spotifyUser, spotifyStuser, isLoggedIn } = useSpotifyStore.getState();
 
   const navigate = useNavigate();
 
@@ -17,6 +17,11 @@ export const Dashboard = () => {
     const token = localStorage.getItem('token');
     const stuToken = localStorage.getItem('stuToken');
     const verifier = localStorage.getItem('verifier');
+
+    console.log(
+      useSpotifyStore.getState().spotifyUser?.display_name,
+      useSpotifyStore.getState().spotifyStuser?.display_name,
+    );
 
     if (code && verifier && !token) {
       handleCallback(code, verifier);
@@ -40,6 +45,7 @@ export const Dashboard = () => {
       useSpotifyStore.setState({
         isLoggedIn: true,
       });
+      navigate('/dashboard');
     }
   }, []);
 
@@ -50,7 +56,7 @@ export const Dashboard = () => {
         new URLSearchParams({
           grant_type: 'authorization_code',
           code,
-          redirect_uri: 'http://localhost:5151/dashboard',
+          redirect_uri: `${import.meta.env.VITE_FRONTEND_URL}/dashboard`,
           client_id: import.meta.env.VITE_CLIENT_ID,
           code_verifier: verifier,
         }),
@@ -136,23 +142,28 @@ export const Dashboard = () => {
 
           for (let index = 0; index < iterations; index++) {
             const x = await axios.get(
-              `https://api.spotify.com/v1/users/${
-                spotifyStuser.id
-              }/playlists?limit=50&offset=${index * 50}`,
+              `https://api.spotify.com/v1/users/${spotifyStuser?.id}/playlists?limit=50&offset=${
+                index * 50
+              }`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem('stuToken')}`,
                 },
               },
             );
+            console.log(x.data.items);
 
             // console.log(x.data.items);
             tracks.push(...x.data.items);
           }
 
+          console.log(tracks);
+
           const albumPerDay = tracks.find(
             (track) => track.name === '2024 album per day',
           );
+
+          console.log(albumPerDay);
 
           const iterations2 = 200;
           const tracks2 = [];
@@ -203,15 +214,8 @@ export const Dashboard = () => {
       </Button>
       <button
         onClick={() => {
-          localStorage.removeItem('verifier');
-          localStorage.removeItem('code');
-          localStorage.removeItem('token');
-          localStorage.removeItem('stuToken');
-
           useSpotifyStore.setState({
             isLoggedIn: false,
-            spotifyUser: null,
-            spotifyStuser: null,
           });
           navigate('/');
         }}

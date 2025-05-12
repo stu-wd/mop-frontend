@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   RouteProps,
+  Navigate,
 } from 'react-router-dom';
 import App from '../App';
 import Error from '../pages/Error';
@@ -28,7 +29,7 @@ const createRoutes = (routes: RouteConfig[]) =>
   ));
 
 const routes: RouteConfig[] = [
-  // {index: true, element: <Navigate to="login" />},
+  { index: true, element: <Navigate to="login" /> },
   {
     path: 'stuAdmin',
     element: (
